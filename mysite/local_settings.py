@@ -1,0 +1,1 @@
+SECRET_KEY = '1_#%)8@p+hp+3--9&qh9u)(9&ko)prq(_hh#3y504a_=$p4o(3'

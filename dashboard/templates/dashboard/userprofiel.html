@@ -1,0 +1,131 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-10">
+        <h1 class="text-secondary">らくたんくん</h1>
+    </div>
+    <div class="col-md-10 mt-2">
+        <h3 class="text-secondary">{{  }}内容を確認してください</h3>
+        <table class="ui celled table table table-hover">
+            <tr>
+                <td>prefix</td>
+                <td>{{ form.prefix.value }}</td>
+            </tr>
+            <tr>
+                <td>fromFrameNumber</td>
+                <td>{{ form.fromFrameNumber.value }}</td>
+            </tr>
+            <tr>
+                <td>toFrameNumber</td>
+                <td>{{ form.toFrameNumber.value }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class='col-md-6 mt-2'>
+        <button type="button" onClick="DownloadFile()"
+            class="btn btn-outline-secondary btn-lg btn-block">複数ダウンロード</button>
+    </div>
+    <div class='col-md-6 mt-2'>
+        <form method="POST" action="{% url 'dashboard:download_zip' %}" class="form-group">
+            {% csrf_token %}
+            {% for field in form %}
+            {{ field.as_hidden }}
+            {% endfor %}
+            <button type="submit" class="btn btn-outline-secondary btn-lg btn-block">ZIPダウンロード</button>
+        </form>
+    </div>
+    <div class="col-md-10">
+        <a href="{% url 'dashboard:index' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
+            role="button">ホームに戻る</a>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    const getCookie = name => {
+        if (document.cookie && document.cookie !== '') {
+            for (const cookie of document.cookie.split(';')) {
+                const [key, value] = cookie.trim().split('=');
+                if (key === name) {
+                    return decodeURIComponent(value);
+                }
+            }
+        }
+    };
+    const csrftoken = getCookie('csrftoken');
+    {% autoescape off %}
+    var prefix = "{{ prefix }}";
+    var fromFrameNumber = "{{ fromFrameNumber }}";
+    var toFrameNumber = "{{ toFrameNumber }}";
+    {% endautoescape %}
+
+    var FILE_NUMBER = 0;
+
+    function DownloadFile() {
+        const url = "{% url 'dashboard:download_files' %}";
+        console.log(prefix)
+        console.log(toFrameNumber)
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(
+                {
+                    'prefix': prefix,
+                    'fromFrameNumber': fromFrameNumber,
+                    'toFrameNumber': toFrameNumber
+                }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+        }).then(response => {
+            return response.json();
+        }).then(response => {
+            function setFile(keyslist, fbrlist) {
+                console.log("1111111");
+                // リンクを生成し、JavaScriptからクリック
+                var objLink = document.createElement("a");
+                document.body.appendChild(objLink);
+                // var objBlob = new Blob([btoa(response.get(keys[i]))], {type: 'application/pcd'});
+                var objBlob = new Blob([fbrlist[FILE_NUMBER]], { type: 'application/pcd' });
+                // blobオブジェクトを指すURLオブジェクト
+                var objURL = window.URL.createObjectURL(objBlob);
+                //console.log(objURL)
+                // リンクを生成し、JavaScriptからクリック
+                //var objLink = document.createElement("a");
+                //document.body.appendChild(objLink);
+                objLink.href = objURL;
+                objLink.setAttribute('download', keyslist[FILE_NUMBER]);
+                objLink.click();
+                console.log(objURL);
+                document.body.removeChild(objLink);
+                //objLink.remove();    
+                setTimeout(() => {
+                    //document.body.removeChild(objLink);
+                    objLink.remove();
+                    URL.revokeObjectURL(objURL);
+                }, 100);
+                //URL.revokeObjectURL(objURL);
+                FILE_NUMBER++;
+                console.log(FILE_NUMBER);
+                if(FILE_NUMBER >= keyslist.length){
+                    clearInterval(timer);
+                    FILE_NUMBER = 0;
+                    console.log("download end")
+                }
+            };
+            console.log(response)
+            // var objResponse = JSON.parse(response)
+            var keys = Object.keys(response);
+            var fbr = [];
+            for (var i = 0;i<keys.length;i++){
+                fbr.push(atob(response[keys[i]]));
+            };
+            console.log(fbr)
+            var timer = setInterval(setFile,200,keys,fbr);
+            console.log(keys.length)
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+</script>
+{% endblock %}
