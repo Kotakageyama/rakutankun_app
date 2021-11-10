@@ -11,9 +11,6 @@ from zipfile import ZipFile
 from .forms import DownloadForm, LoginForm, DownloadCheckForm
 from .models import User, CreditsData
 
-from sshtunnel import SSHTunnelForwarder
-from pymongo import MongoClient
-
 import sys
 from pathlib import Path
 import os
