@@ -22,14 +22,6 @@ import glob
 import json
 import time
 
-def getPrefixList():
-    prefixList = PREFIXLIST
-    temp = []
-    for i in prefixList:
-        temp.append((i,i))
-    prefixList = temp
-    print(prefixList)
-    return prefixList
 
 def user_update(request):
     if request.method == 'POST':
@@ -57,7 +49,7 @@ def index(request):
     return render(request, 'dashboard/index.html',params)
 
 def user_profile(request):
-    params = {'student_id': '', 'username':'', 'credits_list': '', 'form': None}
+    params = {'student_id': '', 'username':'', 'credits_list': '', 'classname':[]}
     if request.method == 'POST':
         params['student_id'] = request.POST['student_id']
         params['fromFrameNumber'] = request.POST['fromFrameNumber']
