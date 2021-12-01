@@ -8,7 +8,7 @@ from django.http import Http404, HttpResponse, FileResponse, StreamingHttpRespon
 from django.shortcuts import get_object_or_404, redirect, render
 from zipfile import ZipFile
 
-from .forms import DownloadForm, LoginForm, DownloadCheckForm
+from .forms import LoginForm
 from .models import User, CreditsData
 
 import sys
@@ -21,17 +21,19 @@ import time
 
 
 def user_update(request):
+    params = {'student_id': '', 'username':'', 'credits_list': [], 'classname':[]}
     if request.method == 'POST':
-        data = json.loads(request.body)
-        print('post')
-        print(data.get('prefix'))
-        print(data.get('fromFrameNumber'))
-    print(data.get('prefix'))
-    filenamebr = getFilenameFilebr(data.get('prefix'),int(data.get('fromFrameNumber')),int(data.get('toFrameNumber')))
-    # return HttpResponse(json.dumps(filenamebr),content_type="application/json")
-    for fn, fb in filenamebr.items():
-        filenamebr[fn] = base64.b64encode(fb).decode()
-    return JsonResponse(filenamebr)
+        print(request.POST)
+        if(User.objects.filter(student_id=request.POST['id'],passwd=request.POST['passwd']).count() != 1):
+            user = User()
+            user.student_id = request.POST['id']
+            user.passwd = request.POST['passwd']
+            user.save()
+        datas_list = User.objects.filter(student_id=request.POST['id'],passwd=request.POST['passwd']).first()
+        params['student_id'] = datas_list.student_id
+        params['username'] = datas_list.username
+        params['credits_list'] = [int(x.strip()) for x in datas_list.credits_list.split(',')]
+    return render(request, 'dashboard/userupdate.html', params)
 
 def index(request):
     params = {'student_id': '', 'passwd': '', 'form': None}
@@ -46,12 +48,16 @@ def index(request):
     return render(request, 'dashboard/index.html',params)
 
 def user_profile(request):
-    params = {'student_id': '', 'username':'', 'credits_list': '', 'classname':[]}
+    params = {'student_id': '', 'username':'', 'credits_list': [], 'classname':[]}
     if request.method == 'POST':
-        params['student_id'] = request.POST['student_id']
-        params['fromFrameNumber'] = request.POST['fromFrameNumber']
-        datas_list = User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']) 
-    else:
-        form = DownloadCheckForm()
-        params['form'] = form
+        print(request.POST)
+        if(User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).count() != 1):
+            user = User()
+            user.student_id = request.POST['student_id']
+            user.passwd = request.POST['passwd']
+            user.save()
+        datas_list = User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).first()
+        params['student_id'] = datas_list.student_id
+        params['username'] = datas_list.username
+        params['credits_list'] = [int(x.strip()) for x in datas_list.credits_list.split(',')]
     return render(request, 'dashboard/userprofile.html', params)
