@@ -48,7 +48,7 @@ def index(request):
     return render(request, 'dashboard/index.html',params)
 
 def user_profile(request):
-    params = {'student_id': '', 'username':'', 'credits_list': [], 'classname':[]}
+    params = {'student_id': '', 'username':'', 'user_credits': [], 'credits_list':CreditsData.objects.all()}
     if request.method == 'POST':
         print(request.POST)
         if(User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).count() != 1):
@@ -59,5 +59,5 @@ def user_profile(request):
         datas_list = User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).first()
         params['student_id'] = datas_list.student_id
         params['username'] = datas_list.username
-        params['credits_list'] = [int(x.strip()) for x in datas_list.credits_list.split(',')]
+        params['user_credits'] = [int(x.strip()) for x in datas_list.credits_list.split(',')]
     return render(request, 'dashboard/userprofile.html', params)
