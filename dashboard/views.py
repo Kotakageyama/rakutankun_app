@@ -33,7 +33,7 @@ def user_update(request):
         params['student_id'] = datas_list.student_id
         params['username'] = datas_list.username
         params['user_credits'] = [int(x.strip()) for x in datas_list.credits_list.split(',')]
-    return render(request, 'dashboard/userprofile.html', params)
+    return render(request, 'dashboard/userupdate.html', params)
 
 def index(request):
     params = {'student_id': '', 'passwd': '', 'form': None}
