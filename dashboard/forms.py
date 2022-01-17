@@ -10,4 +10,10 @@ class LoginForm(forms.Form):
 
     # student_id = forms.CharField(label='学籍番号',max_length=20)
     # passwd = forms.CharField(label='パスワード',max_length=20)
-     
+
+class ProfileDataForm(forms.Form):
+    student_id = forms.CharField(label="学籍番号(12345678)",max_length=20)
+    passwd = forms.CharField(label='パスワード',max_length=20)
+    # user_credits
+    # credits_list
+    #Django form list serch

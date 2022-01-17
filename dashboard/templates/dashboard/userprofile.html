@@ -12,10 +12,6 @@
                 <td>学籍番号</td>
                 <td>{{ student_id }}</td>
             </tr>
-            <tr>
-                <td>名前</td>
-                <td>{{ username }}</td>
-            </tr>
         </table>
         <table class="table">
             <thead class="table-light">
@@ -50,8 +46,14 @@
     <div class="col-10 justify-content-end align-items-center">
         <a href="{% url 'dashboard:index' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
             role="button">ホームに戻る</a>
-        <a href="{% url 'dashboard:userupdate' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
-            role="button">更新する</a>
+        <form method="POST" action="{% url 'dashboard:userupdate' %}" class="form-group">
+            {% csrf_token %}
+            {% for field in form %}
+            {{field.as_hidden}}
+            {% endfor %}
+            <button type="submit"
+            class="btn btn-outline-secondary btn-lg">更新する</button>
+        </form>
     </div>
 </div>
 

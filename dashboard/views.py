@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from zipfile import ZipFile
 
 from .forms import LoginForm
+from .forms import ProfileDataForm
 from .models import User, CreditsData
 
 import sys
@@ -21,17 +22,11 @@ import time
 
 
 def user_update(request):
-    params = {'student_id': '', 'username':'', 'user_credits': [], 'credits_list':CreditsData.objects.all()}
+    params = {'student_id': '', 'user_credits': [], 'credits_list':CreditsData.objects.all()}
     if request.method == 'POST':
         print(request.POST)
-        if(User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).count() != 1):
-            user = User()
-            user.student_id = request.POST['student_id']
-            user.passwd = request.POST['passwd']
-            user.save()
         datas_list = User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).first()
         params['student_id'] = datas_list.student_id
-        params['username'] = datas_list.username
         params['user_credits'] = [int(x.strip()) for x in datas_list.credits_list.split(',')]
     return render(request, 'dashboard/userupdate.html', params)
 
@@ -48,9 +43,10 @@ def index(request):
     return render(request, 'dashboard/index.html',params)
 
 def user_profile(request):
-    params = {'student_id': '', 'username':'', 'user_credits': [], 'credits_list':CreditsData.objects.all()}
+    params = {'student_id': '', 'user_credits': [], 'credits_list':CreditsData.objects.all(),'form':None}
     if request.method == 'POST':
         print(request.POST)
+        form = ProfileDataForm(request.POST)
         if(User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).count() != 1):
             user = User()
             user.student_id = request.POST['student_id']
@@ -58,6 +54,6 @@ def user_profile(request):
             user.save()
         datas_list = User.objects.filter(student_id=request.POST['student_id'],passwd=request.POST['passwd']).first()
         params['student_id'] = datas_list.student_id
-        params['username'] = datas_list.username
         params['user_credits'] = [int(x.strip()) for x in datas_list.credits_list.split(',')]
+        params['form'] = form
     return render(request, 'dashboard/userprofile.html', params)
