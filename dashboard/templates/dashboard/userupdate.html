@@ -1,12 +1,13 @@
 {% extends "dashboard/base.html" %}
+{% load my_templatetags %}
 {% block content %}
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-md-10">
         <h1 class="text-secondary">らくたんくん</h1>
     </div>
-     <div class="col-md-10 mt-2">
+    <div class="col-md-10 mt-2">
         <h3 class="text-secondary">内容を確認してください</h3>
-        <table class="ui celled table table table-hover">
+        <table class="table">
             <tr>
                 <td>学籍番号</td>
                 <td>{{ student_id }}</td>
@@ -14,22 +15,50 @@
             <tr>
                 <td>名前</td>
                 <td>{{ username }}</td>
-
-            </tr>
-            <tr>
-                <td>取得科目</td>
-                <td>{{ credits_list }}</td>
             </tr>
         </table>
+        <table class="table">
+            <thead class="table-light">
+                <th scope="col">#</th>
+                <th scope="col">科目名</th>
+                <th scope="col">単位数</th>
+                <th scope="col">区分</th>
+                <th scope="col">備考</th>
+            </thead>
+            <tbody>
+                {% for class in credits_list %}
+                {% access_list user_credits forloop.counter0 as getFlag %}
+                {% if getFlag == 1 %}
+                <tr class="table-info">
+                {% else %}
+                <tr>
+                {% endif %}
+                    <td>{{ class.Number }}</td>
+                    <td>{{ class.ClassName }}</td>
+                    <td>{{ class.CreditScore }}</td>
+                    <td>{{ class.CreditCondition }}</td>
+                    {% if class.CompulsoryFlag == 1 %}
+                        <td>必修</td>
+                    {% else %}
+                        <td>選択</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    
-    <div class="col-md-10">
+    <div class="col-10 justify-content-end align-items-center">
+        <a href="{% url 'dashboard:index' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
+            role="button">ホームに戻る</a>
         <a href="{% url 'dashboard:userprofile' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
             role="button">保存する</a>
     </div>
-    <div class="col-md-10">
-        <a href="{% url 'dashboard:index' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
-            role="button">ホームに戻る</a>
-    </div>
 </div>
+
+<div class="mt-4">  
+    <div class="container">
+      <p class="text-center text-secondary">© Z班</p>
+    </div>
+ </div>
+ 
 {% endblock %}
