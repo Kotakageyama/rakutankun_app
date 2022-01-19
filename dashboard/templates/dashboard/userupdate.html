@@ -6,15 +6,12 @@
         <h1 class="text-secondary">らくたんくん</h1>
     </div>
     <div class="col-md-10 mt-2">
-        <h3 class="text-secondary">内容を確認してください</h3>
+        <h3 class="text-secondary">内容を確認し、新たに取得した単位をチェックしてください。
+        </h3>
         <table class="table">
             <tr>
                 <td>学籍番号</td>
                 <td>{{ student_id }}</td>
-            </tr>
-            <tr>
-                <td>名前</td>
-                <td>{{ username }}</td>
             </tr>
         </table>
         <table class="table">
@@ -27,13 +24,25 @@
             </thead>
             <tbody>
                 {% for class in credits_list %}
+                <!-- {% for field in form %}
+                {% for c in field %}
+                    <tr>
+                        <td>{{ form.field.forloop.counter0 }}</td>
+                        <td>{{ class.ClassName }}</td>
+                        <td>{{ class.CreditScore }}</td>
+                        <td>{{ class.CreditCondition }}</td>
+                        {% if class.CompulsoryFlag == 1 %}
+                            <td>必修</td>
+                        {% else %}
+                            <td>選択</td>
+                        {% endif %}
+                    </tr>
+    			{% endfor %}
+                {% endfor %} -->
                 {% access_list user_credits forloop.counter0 as getFlag %}
                 {% if getFlag == 1 %}
-                <tr class="table-info">
-                {% else %}
                 <tr>
-                {% endif %}
-                    <td>{{ class.Number }}</td>
+                    <td><button type="button" class="btn btn-outline-info active" data-bs-toggle="button" autocomplete="off" aria-pressed="true">{{ class.Number }}</button></td>
                     <td>{{ class.ClassName }}</td>
                     <td>{{ class.CreditScore }}</td>
                     <td>{{ class.CreditCondition }}</td>
@@ -42,6 +51,18 @@
                     {% else %}
                         <td>選択</td>
                     {% endif %}
+                {% else %}
+                <tr>
+                    <td><button type="button" class="btn btn-outline-info" data-bs-toggle="button" autocomplete="off">{{ class.Number }}</button></td>
+                    <td>{{ class.ClassName }}</td>
+                    <td>{{ class.CreditScore }}</td>
+                    <td>{{ class.CreditCondition }}</td>
+                    {% if class.CompulsoryFlag == 1 %}
+                        <td>必修</td>
+                    {% else %}
+                        <td>選択</td>
+                    {% endif %}
+                {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
@@ -50,6 +71,16 @@
     <div class="col-10 justify-content-end align-items-center">
         <a href="{% url 'dashboard:index' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
             role="button">ホームに戻る</a>
+            <form method="POST" action="{% url 'dashboard:userprofile' %}" class="form-group">
+                {% csrf_token %}
+                {% for field in form %}
+                {% for c in field %}
+                {{ c }}
+                {% endfor %}
+                {% endfor %}
+                <button type="submit"
+                class="btn btn-outline-secondary btn-lg">保存する</button>
+            </form>
         <a href="{% url 'dashboard:userprofile' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
             role="button">保存する</a>
     </div>
