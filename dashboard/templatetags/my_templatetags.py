@@ -18,6 +18,13 @@ def access_list(some_list: list, index: int):
         return ""
 
 @register.simple_tag
+def return_loop(index: int):
+    try:
+        return index
+    except:
+        return ""
+
+@register.simple_tag
 def calcurate_case1(credits_list:list, user_credit):
     try:
         result = 0

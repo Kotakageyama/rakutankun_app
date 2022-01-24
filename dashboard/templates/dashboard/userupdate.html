@@ -14,6 +14,8 @@
                 <td>{{ student_id }}</td>
             </tr>
         </table>
+        <!-- <form method="POST" action="{% url 'dashboard:userprofile' %}" class="form-group">
+            {% csrf_token %} -->
         <table class="table">
             <thead class="table-light">
                 <th scope="col">#</th>
@@ -24,25 +26,14 @@
             </thead>
             <tbody>
                 {% for class in credits_list %}
-                <!-- {% for field in form %}
-                {% for c in field %}
-                    <tr>
-                        <td>{{ form.field.forloop.counter0 }}</td>
-                        <td>{{ class.ClassName }}</td>
-                        <td>{{ class.CreditScore }}</td>
-                        <td>{{ class.CreditCondition }}</td>
-                        {% if class.CompulsoryFlag == 1 %}
-                            <td>必修</td>
-                        {% else %}
-                            <td>選択</td>
-                        {% endif %}
-                    </tr>
-    			{% endfor %}
-                {% endfor %} -->
                 {% access_list user_credits forloop.counter0 as getFlag %}
+                {% return_loop forloop.counter0 as getLoop %}
                 {% if getFlag == 1 %}
                 <tr>
-                    <td><button type="button" class="btn btn-outline-info active" data-bs-toggle="button" autocomplete="off" aria-pressed="true">{{ class.Number }}</button></td>
+                    <!-- <td><button type="button" class="btn btn-outline-info active" data-bs-toggle="button" autocomplete="off" aria-pressed="true">{{ form.choicelist.getLoop }}</button></td> -->
+                    <!-- <td>{{ form.choicelist.getLoop }}</td> -->
+                    <!-- <td>{{ form.choicelist.getLoop.tag }}<label for="{{ form.choicelist.getLoop.id_for_label }}">{{ form.choicelist.getLoop.choice_label }}</label></td> -->
+                    <td>{{ class.Number }}</td>
                     <td>{{ class.ClassName }}</td>
                     <td>{{ class.CreditScore }}</td>
                     <td>{{ class.CreditCondition }}</td>
@@ -53,7 +44,9 @@
                     {% endif %}
                 {% else %}
                 <tr>
-                    <td><button type="button" class="btn btn-outline-info" data-bs-toggle="button" autocomplete="off">{{ class.Number }}</button></td>
+                    <!-- <td><button type="button" class="btn btn-outline-info" data-bs-toggle="button" autocomplete="off">{{ form.choicelist.getLoop }}</button></td> -->
+                    <!-- <td>{{ form.choicelist.getLoop }}</td> -->
+                    <td>{{ class.Number }}</td>
                     <td>{{ class.ClassName }}</td>
                     <td>{{ class.CreditScore }}</td>
                     <td>{{ class.CreditCondition }}</td>
@@ -67,22 +60,24 @@
                 {% endfor %}
             </tbody>
         </table>
+        <!-- <button type="submit" -->
+            <!-- class="btn btn-outline-secondary btn-lg">更新する</button> -->
+        <!-- </form> -->
     </div>
     <div class="col-10 justify-content-end align-items-center">
         <a href="{% url 'dashboard:index' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
             role="button">ホームに戻る</a>
             <form method="POST" action="{% url 'dashboard:userprofile' %}" class="form-group">
                 {% csrf_token %}
-                {% for field in form %}
-                {% for c in field %}
+                {{ form.student_id.as_hidden }}
+                {{ form.passwd.as_hidden }}
+                {% for c in form.choicelist %}
                 {{ c }}
                 {% endfor %}
-                {% endfor %}
+                <br>
                 <button type="submit"
                 class="btn btn-outline-secondary btn-lg">保存する</button>
             </form>
-        <a href="{% url 'dashboard:userprofile' %}" class="btn btn-outline-secondary btn-lg" tabindex="-1"
-            role="button">保存する</a>
     </div>
 </div>
 
