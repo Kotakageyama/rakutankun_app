@@ -25,4 +25,5 @@ class UserUpdateForm(forms.Form):
         required=False,
         disabled=False,
         widget=forms.CheckboxSelectMultiple(attrs={
-            'id': 'choicelist','class': 'form-check-input'}))
+            'id': 'choicelist','class': 'form-check-input bootstrap-select'}))
+        #widget=forms.CheckboxSelectMultiple)

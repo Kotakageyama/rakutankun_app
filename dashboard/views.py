@@ -31,14 +31,16 @@ def user_update(request):
         form = UserUpdateForm(request.POST)
         choicelist = []
         for i in (CreditsData.objects.all()).values():
-            choicelist.append((i['Number'],i['Number']))
+            choicelist.append((i['Number'],i['ClassName']))
             #print(i['Number'])
         ulist = []
         for i,j in enumerate(params['user_credits']):
             if j == 1:
-                ulist.append(i)
+                ulist.append(i+1)
         form.fields['choicelist'].choices = choicelist
         form.fields['choicelist'].initial = ulist
+        print(form.fields['choicelist'])
+        print(ulist)
         params['form'] = form
     return render(request, 'dashboard/userupdate.html', params)
 
@@ -57,6 +59,8 @@ def index(request):
 def getUpdateCreditList(stid, pswd, aalist):
     datas_list = User.objects.filter(student_id=stid,passwd=pswd).first()
     clist = [int(x.strip()) for x in datas_list.credits_list.split(',')]
+    for b in range(len(clist)):
+        clist[b] = 0
     for i in aalist:
         print(i)
         clist[int(i)-1] = 1
@@ -71,9 +75,7 @@ def user_profile(request):
             print(request.POST.getlist('choicelist'))
             print(getUpdateCreditList(request.POST['student_id'], request.POST['passwd'], request.POST.getlist('choicelist')))
             gucl = getUpdateCreditList(request.POST['student_id'], request.POST['passwd'], request.POST.getlist('choicelist'))
-            userUpdate = get_object_or_404(User, student_id = request.POST['student_id'], passwd = request.POST['passwd'])
-            userUpdate.student_id = request.POST['student_id']
-            userUpdate.passwd = request.POST['passwd']
+            userUpdate = User.objects.get(student_id = request.POST['student_id'], passwd = request.POST['passwd'])
             userUpdate.credits_list =  ",".join([str(_) for _ in gucl])
             print(userUpdate)
             userUpdate.save()
